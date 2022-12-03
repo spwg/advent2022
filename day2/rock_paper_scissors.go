@@ -2509,24 +2509,25 @@ A Z`
 
 func run(input string) (int, error) {
 	moves := map[string]int{
-		"X": 1, // rock
-		"Y": 2, // paper
-		"Z": 3, // scissors
+		"A": 1,
+		"B": 2,
+		"C": 3,
 	}
-	// outcomes is a map with keys = encoded string of the game
-	// and values = points for the outcome. The encoding is that
-	// the 1st character is the move the opponent played and the
-	// 2nd character is the move we played.
-	outcomes := map[string]int{
-		"AX": 3, // rock:rock draw
-		"AY": 6, // rock:paper win
-		"AZ": 0, // rock:scissors lose
-		"BX": 0, // paper:rock lose
-		"BY": 3, // paper:paper draw
-		"BZ": 6, // paper:scissors win
-		"CX": 6, // scissors:rock win
-		"CY": 0, // scissors:paper lose
-		"CZ": 3, // scissors:scissors draw
+	results := map[string]int{
+		"X": 0,
+		"Y": 3,
+		"Z": 6,
+	}
+	outcomes := map[string]string{
+		"AX": "C",
+		"AY": "A",
+		"AZ": "B",
+		"BX": "A",
+		"BY": "B",
+		"BZ": "C",
+		"CX": "B",
+		"CY": "C",
+		"CZ": "A",
 	}
 	var total int
 	for _, line := range strings.Split(input, "\n") {
@@ -2536,14 +2537,18 @@ func run(input string) (int, error) {
 		}
 		a, b := fields[0], fields[1]
 		var score int
-		v, ok := moves[b]
+		v, ok := results[b]
 		if !ok {
-			return 0, fmt.Errorf("move %q unrecognized", b)
+			return 0, fmt.Errorf("result %q unrecnogized", b)
 		}
 		score += v
-		v, ok = outcomes[a+b]
+		move, ok := outcomes[a+b]
 		if !ok {
 			return 0, fmt.Errorf("encoding %q unrecognized", a+b)
+		}
+		v, ok = moves[move]
+		if !ok {
+			return 0, fmt.Errorf("move %q unrecognized", move)
 		}
 		score += v
 		total += score
