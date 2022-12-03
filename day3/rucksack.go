@@ -19,20 +19,23 @@ func priority(r rune) (int, error) {
 
 func run(input string) (int, error) {
 	var total int
-	for _, line := range strings.Fields(input) {
-		if len(line)%2 != 0 {
-			return 0, fmt.Errorf("line %q has an odd number of characters", line)
+	lines := strings.Fields(input)
+	for i := 0; i < len(lines); i += 3 {
+		a, b, c := lines[i], lines[i+1], lines[i+2]
+		x, y, z := map[rune]struct{}{}, map[rune]struct{}{}, map[rune]struct{}{}
+		for j := 0; j < len(a); j++ {
+			x[rune(a[j])] = struct{}{}
 		}
-		x := map[rune]struct{}{}
-		for i := 0; i < len(line)/2; i++ {
-			x[rune(line[i])] = struct{}{}
+		for j := 0; j < len(b); j++ {
+			y[rune(b[j])] = struct{}{}
 		}
-		y := map[rune]struct{}{}
-		for i := len(line) / 2; i < len(line); i++ {
-			y[rune(line[i])] = struct{}{}
+		for j := 0; j < len(c); j++ {
+			z[rune(c[j])] = struct{}{}
 		}
 		for r := range x {
-			if _, ok := y[r]; ok {
+			_, okY := y[r]
+			_, okZ := z[r]
+			if okY && okZ {
 				v, err := priority(r)
 				if err != nil {
 					return 0, err
