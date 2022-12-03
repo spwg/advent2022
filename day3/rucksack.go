@@ -1,0 +1,356 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"strings"
+	"unicode"
+)
+
+func priority(r rune) (int, error) {
+	if unicode.IsUpper(r) {
+		return int(r) - 38, nil
+	}
+	if unicode.IsLower(r) {
+		return int(r) - 96, nil
+	}
+	return 0, fmt.Errorf("unrecognized rune %v", r)
+}
+
+func run(input string) (int, error) {
+	var total int
+	for _, line := range strings.Fields(input) {
+		if len(line)%2 != 0 {
+			return 0, fmt.Errorf("line %q has an odd number of characters", line)
+		}
+		x := map[rune]struct{}{}
+		for i := 0; i < len(line)/2; i++ {
+			x[rune(line[i])] = struct{}{}
+		}
+		y := map[rune]struct{}{}
+		for i := len(line) / 2; i < len(line); i++ {
+			y[rune(line[i])] = struct{}{}
+		}
+		for r := range x {
+			if _, ok := y[r]; ok {
+				v, err := priority(r)
+				if err != nil {
+					return 0, err
+				}
+				total += v
+			}
+		}
+	}
+	return total, nil
+}
+
+func main() {
+	priority, err := run(`ZNNvFWHqLNPZHHqPTHHnTGBhrrpjvmwfMmpfpjBjwpmw
+	sbdzQgzgssgbglRtmjlwhjBlfrSrMt
+	zgsCRzJbsdRVQCDbcgLGWWLnZNGVLLZMNZnq
+	tvHhRtZGMvMHvfsrBBCTRbwbccRc
+	qznnlpzzDppWlDpQpCrcrwnBNwTZnBTZrn
+	PdVZJJqVZdllDPFtMjMgLjGMHvSgMF
+	csbhhVDDvzlVDcbccGGvfRjDHCjNLRHRCLfmnZfR
+	dFrStSTTmrrrHVfV
+	MMgQMMTMVTdgWtwTPwSgWSgGbbppJzlplvhBlPbzhlhbzG
+	FDJSTtSGhpPFDmFTZDpTFPmCBBrHqsCBhgBlqqrqrlRrHH
+	dQwMtfdzVwWfwctwnfnQCHllzRrsNzrrgNlCgqsr
+	fLfQnVjfwQfMdfvfnVvWDvtJPFGDpvZGbZpmbSPP
+	TzzCrJcDrTDdLDCJDvGNPCFqlZWlvNvWpq
+	RRHfjsQBFsjgjBQsWqGpNvZQqQlPPQPN
+	VnHBnRVssnnjsSfBwbMSrrbTwJTcwSDF
+	HJCgHCCFFFVGJWTlbqDdlqTDDpgl
+	cZccSmLrfZcrmmzSQftdpDtTHdbQTDMQ
+	NZZccrrBwZRPNNzmcLSSjJhGhVWCnsFnHBjGChsJ
+	qwwwJHTHqdFDtZBFPfFBZFzM
+	gVRcLnnWVgggnnnQgVWWNZtZrBfLBzZzBrMPPrZvPv
+	GQgQSVRtsVnNRGSCdpmwspmbmDpHmhwd
+	bhNgNfgwpbLMhCZMGQBmDm
+	FrcHrSllcqcFFMGLBDQlMDTGlT
+	FVSddRSJRjLwbjJPJw
+	wzhhrTwwTrSsdHQjjSHnBjQj
+	gRDCmVgRgMvtMfVMRBBBhWCHQQHGJHZJQZ
+	NtgVgttVbMNmvsNlpcrLhLTNPw
+	MCgjsfnscgjjgnGgJHHqHDgdHbGr
+	QSSmRFPpRtPFQLQRmPzvBzzzDWqrqWWHJGGNrJJbdtVWHJDV
+	BdSFdLQzRFlSLmQplffwncfscChhcsMj
+	GfVmfnmJVnNVFhnhGmbmhpHvqjrzHZBjfvrtBHHZrwBt
+	ddWQldlMdWMlQsLWTLQgMNwBrvjrZjNrwzZjswHqrv
+	QQdTRcgTRPDlMQlQPQdhcNNnbJmbGpVnGchFmm
+	CjjZCCZfvWZRHHhRtwhvPN
+	mrnqlqMqBlSSLnBTLBwmHPPWhPPHtFRPWzwt
+	rBVTrrMMSMLQBrndGcddWQbbdZfCZJ
+	LFtdjHjLjLqHqstLTjFLFqNMnMhhZdDDNMVbWdDDbhnZ
+	CrBpBGnzrzmczcllrphCZZWJMDWRbbZNMDMR
+	GwgvzpzvrcmBrnfHjTgqTsgHjF
+	rMPPZcplCZlZPwtSwhtBwCQQzB
+	FvDGffLqqmQFwmmhzt
+	TjJjJfHHVDVnHVgZZlQppcVscP
+	hVcqHwhgwwwjHjjGWbvrbBGrsWVWGn
+	CttPRpMmPDTWbWltlLBnGl
+	pZmDFMmPMfnZwqqwfcqJdHgz
+	bSJWhWJCbGGWJPStWTgRQwzDjgQQjsDW
+	nFBBVQVrVBrNFMFZVpBBZFZrDgdTldgsRsslsljsRzTRjzns
+	rMcZcHcBQPvbbHGP
+	mSfmwqfmzrfHwFfmrwvPHqPmMFRlMDDZBCVVRCVZVlZpMRRR
+	TWjdTWhTsssLTGsJNWhTQddjRMDMtNNBSCDBllMMBVtDMVRZ
+	QhWTQcdhjThsdGbTLGjWHmffnmHwnwHrwqmmfcwS
+	LmrsMQnnpfmMLllvTvqvFFzvFHNN
+	WGRFVWdwZWZvCbJzcvJNzw
+	VjGhDtWGSFRGjVVSFdjjDPBfspPnnMBLPLrrpMMm
+	qqqCCJjtqtqCtqLZspHWBdSrWWSzzbzHFWBldb
+	GhwwcwPFVDcNFRRGwwzmlBrBWvllrvSzlrcd
+	DGGhQNNDhTpZZqqLQFQQ
+	QfZmgQQZCCMLfNrgprdNvvdrTg
+	hhttsBmBDcFRBlJshJcRrnjnTvNqpddNNqvndp
+	JtsGJGtGGJJJHDbctllhZHmMwMQSPVPzHSLMPZmV
+	DScSjZcNBZqjDDcLLfFtPfCfjfPvfv
+	pTmRlWhdMwTLGwCf
+	mRdWCVVglWrCmVHVrVCmdrbSzNcBDBqBZDNHqssscNzqNc
+	sPMHGFMsrPNCPnNS
+	ffJzllbzpZBllttBtfglgBTbSCVCmmrNFmmbFNvCFLLb
+	cpZqpfgZZJtJqJJJfWHWhHdHWHjcdRdFHD
+	ZZPfppvzMrlNBFcvFB
+	shJgstJwWLVJwcrFFVFrBVNNqFFB
+	HwWJdLHWWLcQgssHwwSQSQtQzCnZZMpZCmdzZCzpPzpCPRCj
+	QCpLRbsCCQQLbQzCBQDQBBfTTffWtTctJVRNVtnfwtWV
+	GvlqqlGlmMrdsvrhmlcTvwJtwNwTvfJfcWTW
+	lMhgqGhddjqFFCzBBpbsSQpD
+	JJwGJwVQQwVSsSMhQMQgHfgfTtrrfVTNgNNfrt
+	dFDWCDdFppvDFmWWWnJTPllHmHlgrqrgggtH
+	DzFbWjdRpbdFCjjRbnFbQBGhhQBBJZwMhScwZwJz
+	HttvHpHmpJWtHmFNvlvdMSVdPMtLVCCMMMfcfL
+	GjgzhGSGSSdCcRMVjMdc
+	QshbnghgnGDnqsFrNSJFrsNs
+	wJpjMwzjzdVbzPPVpbCHnqGnBqnsBrNCwgrC
+	ftTLLDTQtLTGTGtFrgHrvqgQnrvQsCHH
+	fTcFFfLSfFFcGFllcFhPJPjWWJSjSWzMWPdS
+	ZjNdmjVQVZmvNNZNNZHWZmWtsJnwTpJJswpWwGqJhJqGpp
+	FcRRcDblDMLRcRMLFFMDGsJnqhwpqTTJGwnsfnlp
+	LRBrcLbbgLFgBbFqDvdHQvCCjNzzzVrZdV
+	BdbLWrgdvgWvVJgWnDfNhVnqhCCpDpcq
+	tSQPSTSGPMmlMPtQQPJGtGQRCcnqqfnRhCcChDqnCfRScf
+	jTssPsjMQMmszPjlTtsJdFBFrJzrbJdHZFHdWH
+	vCccctvvTTtZcgLGcZTbssbMWnpMpmLWqnNjpfPPfPjMPp
+	wwBBlRBBwDDVFRhFlRhdRRVWPnnpMpffmmffrpWqVNPm
+	ddhddRzHlQHFJcGsCztTgbNzST
+	fJctfpVWcnfRLfrRwP
+	vmmnvDQDZTNTmGGTqTMTvMqwBdLjBvRzBRrRBRLjjBPzBB
+	GMnmqSTFFQqttcbcJWgsSt
+	rHNfmfRsmfRGfDNcRmcmMQlLCGSnQwwPPCSnzQlSCl
+	bsJTBsVhFsVpqFWFgPCwnQwBZzwQzZLlzn
+	qggTTqvqgqbbTTFqVqgWqvNmmMMRdffftNfMDMmscR
+	rFWQFszrwjsjFWvshPTCmLZLSTLwSLlgSP
+	BQbcqVHNVqVpVpmClJgJJHSmZLJm
+	qBNNNVdDMGBpDcDWsvdQsFrFnjttfj
+	qGhmttmzhtMvhbrLdSHbdSHRzb
+	WCBgQJJpjCQlgdHZrfPRPSRbNg
+	jBTTDjlnjnJDJTQCVntcwtwMSvqcGFDhcvsh
+	ZTrnTqMWWWnfrddMGJPgPLlPbw
+	VvmGRVpBpNNmvNvjVjtpNpCNLLLJHHBdgLPdwsdsbLlwwlwb
+	GmCVSCRVGmpCRVvttmpDrQZfhnzhzqnDWnrZZTQq
+	DQBZHHtWHzSvZvDQWchgqsqqhrrhhcqrcZ
+	jdMfwlFfFlTfndwpjjwGnNrqhPTmPSPTPPhmgrPSrh
+	jlGbwGMdlnJpGFGjpnFCSJzzDDtWHCBBQBvtVC
+	RrbBWBRRWSRsBBVvsPHZDwSjjPdnHwtPtH
+	fTgfzMmNJpmJgfllgpjVQtDDndVQpdnHVtPp
+	gGmlNclTGmGFhLVcVrvLqrvc
+	QcpCTVCZVcCwLcCVvHvvVsCcNzNNSbPRzsDRDSBlsNNzDRtb
+	fggMfJqgrWFpmjWMggmrfMWNSbRSPBDbNtJRtPJzlStBbN
+	gdnmpWGnZvdQCvdv
+	tqqcLqqDDqNtDrqHrrPWlTlTWZTMzTFzQlMPSZ
+	pfnpmmppmppRGjwbjmnjwspWbQQQTMWZbCTSZCSQlCllZF
+	gmpVnGmmmpjDvVLBFqqvrH
+	LqBvJHZvbHGBHrBtGGQTmSVprVzhpVPDPQzQ
+	CRdRgwCfhTVDzSdQ
+	fRCcjgSMjfNgMMLGbGZtvBbGHv
+	HgvtDDzDpvwgvvqdHPZWdMssTTddSs
+	rJFrGNFVQmNFVmRnWhhsrTbhwhZTrdTd
+	VQGBBBVNQClpcBvBwD
+	PWlSzZGmdmGmlGmhggBpvMjvMjFgPJ
+	TtLRDtQQfTVcQQQRtBsJFFccFjWhJJFMBs
+	HqVCNtWHCDwdnlGwGqSr
+	RwdRJgCJRGGmdMbcGbdnTnTtttLLnptMtMtMqZ
+	DWsWPFrPqVPPLVCB
+	zQWWsslsQHFhDSszDSFQzJJJmvcgblRgmNvCJmvNgw
+	tpmFrWTtRpRTtggsSlnQpsnnlSHPsn
+	bZwZjNNZGLSrVsGndPPV
+	NvrcjCfbvvLBDBWfWFgRRm
+	WWFMgWmMhhwDcMMMDcmLWLtQwwsjbsQHvZHbRjZfsZzH
+	PTCplTCdSJJCpvPGNSvsbsfHtbQZzdHjQtjjsj
+	vNGJPpqJvJvqghgFgWFmLD
+	RlRpLTZCjWRjRWwpRsjHjbSbqMqMvvnbnGMnGGqQCq
+	gddfDNczmgPthNcDdgPVnbbzbnJrJJGSSVJJQS
+	BmDmcDmcmhffdBHlRwjRLpwlWQ
+	prQlfzlWRPzgQWzlMPMRppssHHsDsHjwnHHbWDwwbwjL
+	vFBJJtZNShJvZFtdSqtmqjTDVHVGDHbwVHDVsDnThH
+	vcjBZZdZqvCfpzRfcgRp
+	cggpqgRlSpNsgNggbjjj
+	ZZSSJVLVLFDZWNGjCWWbCjsF
+	vZLvfZQQfQtJVJDQShLrLfMmnldmwqwTqqMcMTMTndrm
+	bQBMtBPddtMFbJFhRGzMfzvnRGRSvWnW
+	TmHTqlVHwVpQqjmwGvSgSpnLpzfWGWSn
+	TTrDQCDrrTmDCCCVHHQZBdZFPdsNdFBtFDhtFB
+	fjpQvNZcGhGGTtQS
+	DVJzvbVmHbbtSTSTRStzTM
+	VDvmqllmJfjWlnplNs
+	ZmdHZJjvQLdRjpmLJrqqZBhhtCschPfBPcrDfPffCD
+	MWWSMMwnwlSgzWFFgSwzVwzqcfDCfChCbbtssbfDChcD
+	NMqFTwGqMwgwwgjHRdHRjdmQmQTm
+	TTqWPCWRhTWqPNjPJMNtrlbJFttQwwrBrlbwlc
+	GfpSDGZvpQffSHDgggDZrHctFmrHncnnwwbBtBrt
+	SQGfLsSLZsqMTRNMPT
+	HdBdnBZJTZBBmsfwwBlh
+	MjCVjzwqWrfzplzW
+	vVbqCjjRgjwMbnbGHJScScZHLL
+	dwwwtCdznvDDFrMrrw
+	GmWLQmgQmHgcdGcsTgTDqDbSfFWfMDMfbSNqvr
+	QhTLmVQHLmdLTjGGVptRnZpZBZVRpPpP
+	CzjFpzRHdtBFBCqNqSbJZWcQJTSbQjMTWZ
+	wGwVLlGrdVGwDnwsgfMSZvJMbWJcWlvbbMSc
+	rDfsgggrGnGngsPwdVLfDnmDtzzFNCPHtzCtFHpBRqhPztzR
+	mrgWzBcDtVCcQcCCdscf
+	LRJhjRjPZvqSRGhGjLgMCdHpMNwQCpMHpHMS
+	GRvGJRJjqPZbvGGhRjnqLJWtgFgtzTzDrFnTWrlTlllW
+	cbmcddlffvbTfvFflpZzsMVNznNVlnqnzqHMNM
+	StWJBQRWLRWNPNMCswRVHC
+	BJQBhSWhjSthJQGGWWggJDDDfbdbbfHbddbrFrddvFvv
+	jFqvqvWZWDtBJrrlrq
+	TzGcbHcrmVzMGNSmTcGDtBthJCNtsJDlBCghgP
+	bTrnTccnLSrrTHbnwfLjfdvRRwZFdwfR
+	drHVrdVDfsDbVsdVDbVqRwbZZwCRCCCJlJThwRgT
+	jFPcFpBSvtNPzSFcjcQpcQjpThZCRltGRRRJhwCwGhwgwhRm
+	SQSzPBjjPPSvLqqssdnqLZLMsM
+	bQTWlWlvQclNwwWlCCLStCRSSjStpj
+	zVZZDdBnBmgzVsjsLthSpshdCL
+	DfBnrmBmgzHBfDHmnGrNFCwQvTPvqCTwqTFGbF
+	srSWJnrbmlWlbhzsWszSvPGwvgDhcjdjjfvhjvGv
+	BRRQFLtNfQNMpqpQHDjdDjDcZZcvwZZHPH
+	NLCNCtRQfRttRFRCTqMBqQQrzrbzrlJmVVbsSWmVrTbSzJ
+	RHLfLcSRTFSghLRHGbwZmMZddgJswZsbMm
+	ptqjtCzzQztqCjDlBGpDpbMZdwmMbZsdwNmdJpbs
+	tttzCVllDCtDQnQBVHGHWvWTLWcLSLHf
+	FVlNnPqbGTHftghggJqf
+	zLcZWZpWWrcrZLLZDWrwMcrhBFBttChBmBgptChhtFftmf
+	LZZLrDrrDDMrcwrDwsWFzdTlnGQPQQVbdbnsvnvsVQ
+	BbPNMJNbQvDbvPLwHflczlwwzf
+	pZjWZGZjFGdgpnVgZhghdmcflrlswzzcstlrLwhtwc
+	WZSdqFjqSqSWdGFjZpdMTTDNTvLCRRLLqRQMCN
+	FqgFGtbgTvRwrLqhvw
+	JCCWJWCdJMQNNsSWsMPQRDDLDSDLwTrrvnwfDvnD
+	HdPJlBBHCCQdBMWdTtVbgHczGVGjmtzG
+	PLlZDLZDsFCvbDQv
+	HVcTmVmJqVzqczfzbjvvCFMRfCsWjMvR
+	cqHzTqJTTTTzzmnmrctrBlLlvSlgLdZvSwSlpw
+	SbMMNJjmgMnJdSSbjVFZVSQrlQfWVQVWZh
+	PtqDqPGcLHzHpqLcRzRsfQFfZlfRfZfRFVsl
+	cTDLcqGCzDTqzzDLDzqPTtJvbBJMnmvjbdlmJNvmdgNC
+	tDJDlZVqJGbvHNQbNFFsFPmLns
+	ppczpzpffGwfBNLGmn
+	WShzgTTpWzhWztJJGJSvtvvtjq
+	TbZFTFScnCZFQRTCqQdBjdJqjBqjjQDB
+	rmmLpLLfzrlmslMBHvdRddNDDJDrqD
+	MWwLPzmWfpsMmmlMPMWLwRTZTZnnTcVCcZFCwSnZ
+	SqmClqHssNWCqPTcWcGhBTchVV
+	ZnnnDflRpBVTTVhPBZ
+	DpgfvnvMfCsqlMtSll
+	ZzLMRZpLMwwppZqnQGvQgBSvlNVlBFFNFVrg
+	HcqhTmhmdDTPFTJgTTFBSgJN
+	mccPdDDHbssbtwZMqpbzCRGM
+	TgqnTltgWqLRSRnlqddngFfrvHvrBTfCCFrFVTvVCf
+	cwNJmPzQwNzczzNsJGhhHfhrfvVHGvtvVVfC
+	jjtbtDswcmPWlbgRnRdMZL
+	TmpTBBwvspTptRmsmTGLQDGRHGgVGLSQSMHQ
+	ZlPWqjWrzjPqdrlzbrbrwfrWLHVMLnHDMVDQnLQfQfVngQLS
+	zNwbrrFWbFJpmpmvvt
+	RMQQMwHMMzcFsWsDrWfcpJpS
+	LLhZmGVLhVlTZfWWfWpCrDsGSp
+	VLVTnqjjZngtQRFjvzDM
+	gmRBpjrpRvCfRCrBgvjHShnbnngbgSJnNsHMHS
+	ZDPTwGWtqwHhSnbcMNJw
+	DWGGqtVVqldWZzMzWmvjrjprLRFjRVvvff
+	tCzVzsVtDFzssnSsgdqJdCNqJhmgmpqq
+	PZccPGvQfRLMQwNdhpwhNh
+	jLrcbRjPZBrcPdjRHFlWnVtBFslSWznW
+	vvvbJbWrLvFWHzZzZRhB
+	chtwTmCNlRRZzRPT
+	hmcCssCswrMDGMSrsr
+	LStGBsQLlllhzMzs
+	dzVZDNWRDdZNDTZTPvWVhhphpMlfMccRmfnlMlRn
+	VFvgTrNPdFWNNFNFTzTFFSjSQBCqrtQwSBGLLBGwGL
+	qGJSJhWStdSfWvSvtGRRnzRDDggrgvnzsmRP
+	lTTLpcljjGlLlLNBpjwFQDQmRnrRDPrPscRrDDng
+	NCNjFlHNCTVjpwGqGSVbJddqZZJM
+	MbWdgvHFlMvmzTzShvmm
+	tqjqpLsNsrrsjstNLpQrGVhVBzrhVcfmchDcTPVVmc
+	RqwjqjqsGjjGGQNjGpQZpqRFJgmMHwdbFWgnHMFdwmmCFW
+	HHHLcCcVHjTHglsB
+	wDSRwzzRpMSdNSPSwSpRbqvgBsdqlgTvBFBjgFvvgB
+	RpbzPssDMWwNRbRNRPDsDhJthLQVGLJcctQCJQfQJCLm
+	WsZgbNgZVCCWbVVVmgZbCCRPccGnzPBqJjzWJBJPzvBvGz
+	SpfThHtrHFBPPzJvPntj
+	QHDhhrhpTQpHhQHnfwnTCNlbZCCDLNllZlVsNCNl
+	QtzJFRQLMRnZcZsfcphlPQ
+	qSBbjmWSCNmVldSqqSqmjCSZshfwfrPPZZfcPVZfhgsgPg
+	HqBbHqBGSlNBbltnLLHFJMtRvRTD
+	tcGtDdMcttttHNBlMctldlwjwwqqCLCwDwZjFCZhmnwC
+	VrJgvWWsPvRgVgrJQvfQfzgVzZwCbLZmnmwCwZqmnhjZbnLj
+	sJpffsRWWRJVWWpHltSpnMHGcMTl
+	zNqRbqSbfdcTLLfS
+	ZVPzPnVvdLwLDPfF
+	VWnzQCVWZVMzQRHgqgqrHGtGMp
+	PbHpWfWPvRfbzWPFfRpPDtBwSHMwCBgDwBjDtMMM
+	hTTdZQlcnTcmqVTdcddrDgBSwsjjBgqBtsCgMD
+	hlldTmdJJmJdZvzfFfNJFJgRzR
+	PJWvJBbWsfLQWsLvmCqHCcNLHqHLLcwDqV
+	dQztrZrdwHhptqDH
+	ZrMGjgMSrdzQGQRJPvGGbm
+	RmjljZChlDZBCRRvlmNSLSqMNLzwLvppwQSQ
+	sTnVnPrVGsGTPddJrfgQgqLgGpMNQtgNtNzg
+	sbbTfTdcJPnHbsJfHsdcmDDmmqBZlClmjBRDCZ
+	CJmHLmHFFCFbHsbJsJqvqhQqLDhQZvnQDZnn
+	wGwppTjdWPdgFpGcScBqNnNqNhQlDqnDlZZW
+	pGcgGgTpGjFdwpSFVgSdpPjrMCMffzJzRzztRfHCRsVmtbsz
+	CgBClZfCflPflNZRvfQswwmwmwQsQhgppdhm
+	qbzDGrjLLNLDHDqtJmmhhmQdhwpQhhbp
+	NLGqVqjDjjGrMFrvFWPBRBZnCvfFnT
+	tbrrHsgsVmmmbtgwVsQRqjJMmqMjQfJfLFLD
+	ZvlBGzdvjGfRFJQJ
+	dBppnnBBhdzZncBPlznpnNdWHSsbWthbSCgHrVfgSSwVgr
+	VRvMtRVFHQLvMRQFQtBctrthshTTgCmhTrgWhWZsZZ
+	lzJlGBSPPhzjgZsTCr
+	wJlpJPfDSpwBnddqJDdpPpcvMFHFMvNbvnNMFHHRVVbR
+	CPShbbdlGCdQqlRPGPdlDWDFzjtFjggCDJgWczfF
+	mrHrTrrBMBsmNsrwsBpnfpggDDcjjDDpjzFJzzjtJz
+	BvsNvBLHrrrNvwBTNNsNGbdQhlPGGfqhhRGqLGdl
+	PSSlPtlStGhPNMtwPMPJzDddnbnDNTDDnJqjbz
+	FFVHRwVLvFvVrVHrZcLmRHggjDmdDnDnznnznzQjzdmJddbn
+	WrvgRgcRcRrrcRvgcVrHVrwCCSfsCsGsllhMSSSSMttlSCpG
+	hBPJqVZTqqPSlGlfddfddZvl
+	JWWMJCpnMrmztzdjnzld
+	RbWsrwMrpbRspbWgpwhLJPccNVqLLPSVgVPV
+	hcTrWqcfhwGfWrWMjHjGvDHPmJMDzF
+	ZtlsnZZtLBSbSssnbndjDJJFHFHJPHPsHMTHHM
+	ntRZtSbtZgZStTqchwQfRwNpcq
+	GfLqrsqQGgPgjjQGVcNvTpTpNFcWPvPPpT
+	bRnRLnMZFdCMcpvT
+	RnRhzRlmlhhHhhmhRsqLrfzrGVSrGBSGrL
+	fbMffwdZsncrGcfG
+	qDBjSSLqhLBSmDbjqNhqTLjCGrCHGrvcGWcpWcrGWnCrpm
+	STLDqbhTLqNTNSRhlwZlJlRQFFRwMdPQ
+	TVVGNFggcjPPJzwvQlRRwRvSlcSc
+	frsBbWhtSRzSLfRf
+	qDCqddbsWrqzhsdNmdJNJHjTggFFVV
+	NTWTDrSdFTLtPTGf
+	lZqjHlVRvRltLtRWFMtFLL
+	qvjWzzvVbZpjqllggscdchwDrCphwsdhrD`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(priority)
+}
+
+func init() {
+	log.SetFlags(log.Flags() | log.Lshortfile)
+}
