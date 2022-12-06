@@ -5,23 +5,22 @@ import (
 	"log"
 )
 
-func unique(s string) bool {
-	log.Printf("%q", s)
-	m := map[rune]struct{}{}
-	for _, c := range s {
-		if _, ok := m[c]; ok {
-			return false
-		}
-		m[c] = struct{}{}
-	}
-	return true
-}
-
 func run(input string) (int, error) {
-	for i := 4; i < len(input); i++ {
-		if unique(input[i-4 : i]) {
+	m := map[string]int{}
+	for i := 0; i < 14; i++ {
+		m[input[i:i+1]] += 1
+	}
+	j := 0
+	for i := 14; i < len(input); i++ {
+		if len(m) == 14 {
 			return i, nil
 		}
+		m[input[i:i+1]] += 1
+		m[input[j:j+1]] -= 1
+		if m[input[j:j+1]] == 0 {
+			delete(m, input[j:j+1])
+		}
+		j++
 	}
 	return 0, fmt.Errorf("not found")
 }
