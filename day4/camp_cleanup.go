@@ -38,11 +38,19 @@ func run(input string) (int, error) {
 		if err != nil {
 			return 0, err
 		}
-		if x >= p && y <= q {
+		if x >= p && x <= q {
 			count += 1
 			continue
 		}
-		if p >= x && q <= y {
+		if y >= p && y <= q {
+			count += 1
+			continue
+		}
+		if p >= x && p <= y {
+			count += 1
+			continue
+		}
+		if q >= x && q <= y {
 			count += 1
 			continue
 		}
