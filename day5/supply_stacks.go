@@ -84,10 +84,10 @@ func trimNumber(s string) (string, int, error) {
 func applyMoves(moves []move, crates [][]string) ([][]string, error) {
 	for _, m := range moves {
 		for i := 0; i < m.numCrates; i++ {
-			j := len(crates[m.from]) - 1
+			j := len(crates[m.from]) - (m.numCrates - i)
 			crates[m.to] = append(crates[m.to], crates[m.from][j])
-			crates[m.from] = crates[m.from][:j]
 		}
+		crates[m.from] = crates[m.from][:len(crates[m.from])-m.numCrates]
 	}
 	return crates, nil
 }
